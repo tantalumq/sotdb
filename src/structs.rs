@@ -1,11 +1,12 @@
+#[allow(dead_code)]
 #[derive(Debug)]
-pub struct Table {
+pub struct Object {
     name: String,
     data: Vec<(String, DataType)>,
 }
-impl Table {
-    pub fn new(name: String, data: Vec<(String, DataType)>) -> Table {
-        Table { name, data }
+impl Object {
+    pub fn new(name: String, data: Vec<(String, DataType)>) -> Object {
+        Object { name, data }
     }
     pub fn get_name(&self) -> &String {
         &self.name
@@ -28,6 +29,14 @@ impl DataType {
             DataType::Int(_) => "<int>",
             DataType::Float(_) => "<float>",
             DataType::Bool(_) => "<bool>",
+        }
+    }
+    pub fn get_value(&self) -> String {
+        match self {
+            DataType::Str(s) => s.to_owned().to_string(),
+            DataType::Int(i) => i.to_owned().to_string(),
+            DataType::Float(f) => f.to_owned().to_string(),
+            DataType::Bool(b) => b.to_owned().to_string(),
         }
     }
 }

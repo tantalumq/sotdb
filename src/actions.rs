@@ -1,23 +1,40 @@
 use crate::structs::*;
-use std::{fs::*, os::windows::prelude::FileExt, io::Write};
+use std::{
+    fs::{self, *},
+    io::{Error, ErrorKind, Write},
+};
 
-pub fn create_table(table_name: &str, data: Vec<&str>, path: &str) -> Result<(), std::io::Error> {
+pub fn create_object(
+    object_name: &str,
+    datas: Vec<(String, DataType)>,
+    path: &str,
+) -> Result<(), std::io::Error> {
     let file = File::open(path)?;
     let mut perm = file.metadata()?.permissions();
     perm.set_readonly(false);
-    let mut tables = load_tables(path);
-    Ok(())
-}
-fn load_tables(path: &str) -> Result<Vec<Table>, std::io::Error> {
-    let mut tables = vec![];
-    let mut table_names = vec![];
-    let mut table_datas = vec![];
-    read_to_string(path)?.lines().for_each(|line| {
-        println!("{}", line);
-        if line.contains("[table-name]:") {
-            table_names.push(line.replace("[table-name]:", ""));
+    let mut objects = load_objects(path)?;
+    for data in datas.iter() {
+        if data.0 == "id".to_string() {
+            return Err(Error::new(ErrorKind::Other, "Can`t add field id"));
         }
-        table_names.iter().for_each(|name| {
+    }
+    for object in objects.iter() {
+        if object.get_name() == object_name {
+            return Err(Error::new(ErrorKind::Other, "Name already created"));
+        }
+    }
+    objects.push(Object::new(object_name.to_string(), datas));
+    save_object(objects, path.to_string())
+}
+fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
+    let mut objects = vec![];
+    let mut object_names = vec![];
+    let mut object_datas = vec![];
+    read_to_string(path)?.lines().for_each(|line| {
+        if line.contains("[object-name]:") {
+            object_names.push(line.replace("[object-name]:", ""));
+        }
+        object_names.iter().for_each(|name| {
             if line.contains(
                 format!(
                     "[{}:{}]:",
@@ -40,7 +57,7 @@ fn load_tables(path: &str) -> Result<Vec<Table>, std::io::Error> {
                     .find_map(|(idx, char)| if char == '=' { Some(idx) } else { None })
                     .unwrap();
 
-                table_datas.push((
+                object_datas.push((
                     s[..var_end].to_string(),
                     DataType::Str(s[var_end..].to_string().replace("=", "")),
                     name.to_owned(),
@@ -57,7 +74,7 @@ fn load_tables(path: &str) -> Result<Vec<Table>, std::io::Error> {
                     .find_map(|(idx, char)| if char == '=' { Some(idx) } else { None })
                     .unwrap();
 
-                table_datas.push((
+                object_datas.push((
                     s[..var_end].to_string(),
                     DataType::Int(s[var_end..].to_string().replace("=", "").parse().unwrap()),
                     name.to_owned(),
@@ -74,7 +91,7 @@ fn load_tables(path: &str) -> Result<Vec<Table>, std::io::Error> {
                     .find_map(|(idx, char)| if char == '=' { Some(idx) } else { None })
                     .unwrap();
 
-                table_datas.push((
+                object_datas.push((
                     s[..var_end].to_string(),
                     DataType::Float(s[var_end..].to_string().replace("=", "").parse().unwrap()),
                     name.to_owned(),
@@ -92,7 +109,7 @@ fn load_tables(path: &str) -> Result<Vec<Table>, std::io::Error> {
                     .find_map(|(idx, char)| if char == '=' { Some(idx) } else { None })
                     .unwrap();
 
-                table_datas.push((
+                object_datas.push((
                     s[..var_end].to_string(),
                     DataType::Bool(s[var_end..].to_string().replace("=", "").parse().unwrap()),
                     name.to_owned(),
@@ -100,17 +117,38 @@ fn load_tables(path: &str) -> Result<Vec<Table>, std::io::Error> {
             }
         });
     });
-    for name in table_names {
+    for name in object_names {
         let mut datas = vec![];
-        for data in &table_datas {
+        for data in &object_datas {
             if data.2 == name {
                 datas.push((data.0.to_owned(), data.1.to_owned()));
             }
         }
-        tables.push(Table::new(name, datas))
+        objects.push(Object::new(name, datas))
     }
-    println!("[Tables]:{:#?}", &tables);
-    return Ok(tables);
+    println!("{:?}", &objects);
+    return Ok(objects);
+}
+fn save_object(objects: Vec<Object>, path: String) -> Result<(), std::io::Error> {
+    fs::remove_file(&path)?;
+    let mut file = File::create(&path)?;
+    for object in objects.iter() {
+        file.write_all(format!("[object-name]:{}\n", object.get_name().trim_end()).as_bytes())?;
+        for data in object.to_owned().get_data().iter() {
+            file.write_all(
+                format!(
+                    "[{}:{}]:{}={}\n",
+                    object.get_name().trim_end(),
+                    data.1.get_type_anotation(),
+                    data.0,
+                    data.1.get_value()
+                )
+                .as_bytes(),
+            )?;
+        }
+        file.write_all(format!("--------\n").as_bytes())?;
+    }
+    Ok(())
 }
 
 #[cfg(test)]
@@ -120,7 +158,12 @@ mod tests {
     #[test]
     fn test_create() {
         assert_eq!(
-            create_table("example", vec!["name", "value"], "example.sotdb").unwrap(),
+            create_object(
+                "example",
+                vec![("name".to_string(), DataType::Str("Andrei wads".to_string()))],
+                "example.sotdb"
+            )
+            .unwrap(),
             ()
         );
     }
