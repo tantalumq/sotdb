@@ -1,12 +1,13 @@
 [table-name]:another_example
 [another_example:<int>]:id=0
 [another_example:<str>]:name=data-example
+[another_example:<str>]:another-name=another-name-example
 [another_example:<float>]:float=0.17
 [another_example:<bool>]:bool=true
 #
 [table-name]:example
-[ example:<int>]:id=0
-[ example:<str>]:name=data-example
-[ example:<float>]:float=0.17
-[ example:<bool>]:bool=true
+[example:<int>]:id=1
+[example:<str>]:name=data-example
+[example:<float>]:float=0.17
+[example:<bool>]:bool=true
 #

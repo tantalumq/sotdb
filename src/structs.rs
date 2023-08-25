@@ -1,13 +1,20 @@
+#[derive(Debug)]
 pub struct Table {
     name: String,
     data: Vec<(String, DataType)>,
-    path: String,
 }
 impl Table {
-    pub fn new(name: String, data: Vec<(String, DataType)>, path: String) -> Table {
-        Table { name, data, path }
+    pub fn new(name: String, data: Vec<(String, DataType)>) -> Table {
+        Table { name, data }
+    }
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
+    pub fn get_data(&self) -> &Vec<(String, DataType)> {
+        &self.data
     }
 }
+#[derive(Debug, PartialEq, Clone)]
 pub enum DataType {
     Str(String),
     Int(i32),
