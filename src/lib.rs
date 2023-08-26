@@ -1,5 +1,5 @@
-mod actions;
-mod structs;
+pub mod actions;
+pub mod structs;
 #[cfg(test)]
 mod succes_tests {
 
