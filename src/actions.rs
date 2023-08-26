@@ -6,25 +6,30 @@ use std::{
 
 pub fn create_object(
     object_name: &str,
-    datas: Vec<(String, DataType)>,
+    datas: &mut Vec<(String, DataType)>,
     path: &str,
 ) -> Result<(), std::io::Error> {
     let file = File::open(path)?;
     let mut perm = file.metadata()?.permissions();
     perm.set_readonly(false);
     let mut objects = load_objects(path)?;
-    for data in datas.iter() {
-        if data.0 == "id".to_string() {
-            return Err(Error::new(ErrorKind::Other, "Can`t add field id"));
-        }
-    }
+
     for object in objects.iter() {
         if object.get_name() == object_name {
             return Err(Error::new(ErrorKind::Other, "Name already created"));
         }
     }
-    objects.push(Object::new(object_name.to_string(), datas));
-    save_object(objects, path.to_string())
+    objects.push(Object::new(object_name.to_string(), datas.to_owned()));
+    save_objects(objects, path.to_string())
+}
+pub fn get_object(object_name: &str, path: &str) -> Result<Object, std::io::Error> {
+    let objects = load_objects(path)?;
+    for object in objects {
+        if object.get_name() == object_name {
+            return Ok(object);
+        }
+    }
+    return Err(Error::new(ErrorKind::Other, "Object not found"));
 }
 fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
     let mut objects = vec![];
@@ -126,10 +131,9 @@ fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
         }
         objects.push(Object::new(name, datas))
     }
-    println!("{:?}", &objects);
     return Ok(objects);
 }
-fn save_object(objects: Vec<Object>, path: String) -> Result<(), std::io::Error> {
+fn save_objects(objects: Vec<Object>, path: String) -> Result<(), std::io::Error> {
     fs::remove_file(&path)?;
     let mut file = File::create(&path)?;
     for object in objects.iter() {
@@ -146,25 +150,7 @@ fn save_object(objects: Vec<Object>, path: String) -> Result<(), std::io::Error>
                 .as_bytes(),
             )?;
         }
-        file.write_all(format!("--------\n").as_bytes())?;
+        file.write_all(format!("|=============================|\n").as_bytes())?;
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_create() {
-        assert_eq!(
-            create_object(
-                "example",
-                vec![("name".to_string(), DataType::Str("Andrei wads".to_string()))],
-                "example.sotdb"
-            )
-            .unwrap(),
-            ()
-        );
-    }
 }
