@@ -25,14 +25,14 @@ fn main() {
             ("floatnum".to_string(), DataType::Float(0.0)),
             ("boolean".to_string(), DataType::Bool(false)),
         ],
-        "database.sotdb"
+        "*.sotdb"
     );
     // Get one object using his name  and path to *.sotdb file
-    let object = get_object("name", "database.sotdb");
+    let object = get_object("name", "*.sotdb");
     // Get all objects from *.sotdb file
-    let all_objects = get_all_objects("database.sotdb");
+    let all_objects = get_all_objects("*.sotdb");
     // Delete object using his name and path to *.sotdb file
-    delete_object(object.unwrap().get_name(), "database.sotdb").unwrap();
+    delete_object(object.unwrap().get_name(), "*.sotdb").unwrap();
 }
 ```
 
