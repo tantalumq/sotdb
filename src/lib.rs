@@ -1,6 +1,5 @@
 mod actions;
 mod structs;
-
 #[cfg(test)]
 mod succes_tests {
 
@@ -26,6 +25,7 @@ mod succes_tests {
             .unwrap()
         );
     }
+
     #[test]
     fn get_object() {
         actions::create_object(

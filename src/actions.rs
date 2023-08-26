@@ -39,6 +39,14 @@ pub fn get_object(object_name: &str, path: &str) -> Result<Object, std::io::Erro
     return Err(Error::new(ErrorKind::Other, "Object not found"));
 }
 #[allow(dead_code)]
+pub fn get_all_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
+    if !path.ends_with(".sotdb") {
+        return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
+    }
+    let objects = load_objects(path)?;
+    Ok(objects)
+}
+#[allow(dead_code)]
 pub fn delete_object(object_name: &str, path: &str) -> Result<(), std::io::Error> {
     if !path.ends_with(".sotdb") {
         return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
