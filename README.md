@@ -27,7 +27,7 @@ fn main() {
         ],
         "*.sotdb"
     );
-    // Get one object using his name  and path to *.sotdb file
+    // Get one object using his name and path to *.sotdb file
     let object = get_object("name", "*.sotdb");
     // Get all objects from *.sotdb file
     let all_objects = get_all_objects("*.sotdb");
@@ -35,14 +35,6 @@ fn main() {
     delete_object(object.unwrap().get_name(), "*.sotdb").unwrap();
 }
 ```
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
