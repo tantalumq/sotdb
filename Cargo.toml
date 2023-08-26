@@ -9,8 +9,15 @@
     description="simple database"
     license="MIT"
     readme="README.md"
-    exclude = ["target", "tests"]
-    include=["src/", ".gitignore"]
-    keywords=["database"]
+    exclude=[
+        "target",
+        "tests",
+    ]
+    include=[
+        "src/",
+        ".gitignore",
+    ]
+    keywords=[
+        "database",
+    ]
     repository="https://github.com/Tantalumoid/sot"
-
