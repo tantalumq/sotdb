@@ -4,11 +4,15 @@ use std::{
     io::{Error, ErrorKind, Write},
 };
 
+#[allow(dead_code)]
 pub fn create_object(
     object_name: &str,
     datas: &mut Vec<(String, DataType)>,
     path: &str,
 ) -> Result<(), std::io::Error> {
+    if !path.ends_with(".sotdb") {
+        return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
+    }
     let file = File::open(path)?;
     let mut perm = file.metadata()?.permissions();
     perm.set_readonly(false);
@@ -16,13 +20,16 @@ pub fn create_object(
 
     for object in objects.iter() {
         if object.get_name() == object_name {
-            return Err(Error::new(ErrorKind::Other, "Name already created"));
+            return Err(Error::new(ErrorKind::Other, "Name already in use"));
         }
     }
     objects.push(Object::new(object_name.to_string(), datas.to_owned()));
     save_objects(objects, path.to_string())
 }
 pub fn get_object(object_name: &str, path: &str) -> Result<Object, std::io::Error> {
+    if !path.ends_with(".sotdb") {
+        return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
+    }
     let objects = load_objects(path)?;
     for object in objects {
         if object.get_name() == object_name {
@@ -31,6 +38,19 @@ pub fn get_object(object_name: &str, path: &str) -> Result<Object, std::io::Erro
     }
     return Err(Error::new(ErrorKind::Other, "Object not found"));
 }
+#[allow(dead_code)]
+pub fn delete_object(object_name: &str, path: &str) -> Result<(), std::io::Error> {
+    if !path.ends_with(".sotdb") {
+        return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
+    }
+    let target_object = get_object(object_name, path)?;
+    let mut objects = load_objects(path)?;
+    if let Some(idx) = objects.iter().position(|object| object == &target_object) {
+        objects.swap_remove(idx);
+    }
+    return Ok(());
+}
+#[allow(dead_code)]
 fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
     let mut objects = vec![];
     let mut object_names = vec![];
@@ -133,6 +153,7 @@ fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
     }
     return Ok(objects);
 }
+#[allow(dead_code)]
 fn save_objects(objects: Vec<Object>, path: String) -> Result<(), std::io::Error> {
     fs::remove_file(&path)?;
     let mut file = File::create(&path)?;
