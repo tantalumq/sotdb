@@ -3,16 +3,13 @@ pub mod structs;
 #[cfg(test)]
 mod succes_tests {
 
-    use crate::{
-        actions,
-        structs::{DataType, Object},
-    };
+    use crate::{actions::*, structs::*};
 
     #[test]
-    fn create_object() {
+    fn test_create_object() {
         assert_eq!(
             (),
-            actions::create_object(
+            create_object(
                 "test-create-object",
                 &mut vec![
                     ("test-str".to_string(), DataType::Str("test".to_string())),
@@ -27,8 +24,8 @@ mod succes_tests {
     }
 
     #[test]
-    fn get_object() {
-        actions::create_object(
+    fn test_get_object() {
+        create_object(
             "test-get-object",
             &mut vec![
                 ("test-str".to_string(), DataType::Str("test".to_string())),
@@ -49,12 +46,12 @@ mod succes_tests {
                     ("test-bool".to_string(), DataType::Bool(false)),
                 ],
             ),
-            actions::get_object("test-get-object", "tests/succes/test2.sotdb",).unwrap()
+            get_object("test-get-object", "tests/succes/test2.sotdb",).unwrap()
         );
     }
     #[test]
-    fn delete_object() {
-        actions::create_object(
+    fn test_delete_object() {
+        create_object(
             "test-delete-object",
             &mut vec![
                 ("test-str".to_string(), DataType::Str("test".to_string())),
@@ -67,13 +64,13 @@ mod succes_tests {
         .unwrap();
         assert_eq!(
             (),
-            actions::delete_object("test-delete-object", "tests/succes/test3.sotdb",).unwrap()
+            delete_object("test-delete-object", "tests/succes/test3.sotdb",).unwrap()
         );
     }
 }
 #[cfg(test)]
 mod failures_tests {
-    use crate::{actions, structs::DataType};
+    use crate::{actions, structs::*};
     #[test]
     fn object_name_already_in_use() {
         actions::create_object(
