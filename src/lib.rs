@@ -1,5 +1,6 @@
 pub mod actions;
 pub mod structs;
+
 #[cfg(test)]
 mod succes_tests {
 
@@ -65,6 +66,52 @@ mod succes_tests {
         assert_eq!(
             (),
             delete_object("test-delete-object", "tests/succes/test3.sotdb",).unwrap()
+        );
+    }
+    #[test]
+    fn test_add_data_to_object() {
+        create_object(
+            "test_add_data_to_object",
+            &mut vec![
+                ("test-str".to_string(), DataType::Str("test".to_string())),
+                ("test-int".to_string(), DataType::Int(0)),
+                ("test-float".to_string(), DataType::Float(0.0)),
+                ("test-bool".to_string(), DataType::Bool(false)),
+            ],
+            "tests/succes/test4.sotdb",
+        )
+        .unwrap();
+        assert_eq!(
+            (),
+            add_data_to_object(
+                "test_add_data_to_object",
+                "tests/succes/test4.sotdb",
+                vec![("test-bool".to_string(), DataType::Bool(true))]
+            )
+            .unwrap()
+        );
+    }
+    #[test]
+    fn test_remove_data_to_object() {
+        create_object(
+            "test_remove_data_from_object",
+            &mut vec![
+                ("test-str".to_string(), DataType::Str("test".to_string())),
+                ("test-int".to_string(), DataType::Int(0)),
+                ("test-float".to_string(), DataType::Float(0.0)),
+                ("test-bool".to_string(), DataType::Bool(false)),
+            ],
+            "tests/succes/test5.sotdb",
+        )
+        .unwrap();
+        assert_eq!(
+            (),
+            remove_data_from_object(
+                "test_remove_data_from_object",
+                "tests/succes/test5.sotdb",
+                vec!["test-bool".to_string()]
+            )
+            .unwrap()
         );
     }
 }

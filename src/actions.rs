@@ -4,6 +4,7 @@ use std::{
     io::{Error, ErrorKind, Write},
 };
 
+// Create new object
 #[allow(dead_code)]
 pub fn create_object(
     object_name: &str,
@@ -26,6 +27,7 @@ pub fn create_object(
     objects.push(Object::new(object_name.to_string(), datas.to_owned()));
     save_objects(objects, path.to_string())
 }
+// Give one object
 pub fn get_object(object_name: &str, path: &str) -> Result<Object, std::io::Error> {
     if !path.ends_with(".sotdb") {
         return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
@@ -38,6 +40,7 @@ pub fn get_object(object_name: &str, path: &str) -> Result<Object, std::io::Erro
     }
     return Err(Error::new(ErrorKind::Other, "Object not found"));
 }
+// Give all objects
 #[allow(dead_code)]
 pub fn get_all_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
     if !path.ends_with(".sotdb") {
@@ -46,6 +49,7 @@ pub fn get_all_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
     let objects = load_objects(path)?;
     Ok(objects)
 }
+// Delete object
 #[allow(dead_code)]
 pub fn delete_object(object_name: &str, path: &str) -> Result<(), std::io::Error> {
     if !path.ends_with(".sotdb") {
@@ -55,6 +59,64 @@ pub fn delete_object(object_name: &str, path: &str) -> Result<(), std::io::Error
     let mut objects = load_objects(path)?;
     if let Some(idx) = objects.iter().position(|object| object == &target_object) {
         objects.swap_remove(idx);
+        return save_objects(objects, path.to_string());
+    }
+    return Err(Error::new(ErrorKind::Other, "Object not found"));
+}
+// Push new data to object
+#[allow(dead_code)]
+pub fn add_data_to_object(
+    object_name: &str,
+    path: &str,
+    new_data: Vec<(String, DataType)>,
+) -> Result<(), std::io::Error> {
+    if !path.ends_with(".sotdb") {
+        return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
+    }
+    let target_object = get_object(object_name, path)?;
+    let mut objects = load_objects(path)?;
+    if let Some(idx) = objects.iter().position(|object| object == &target_object) {
+        for data in new_data {
+            objects
+                .get_mut(idx)
+                .unwrap()
+                .get_data()
+                .to_owned()
+                .push(data);
+        }
+        return save_objects(objects, path.to_string());
+    }
+    return Err(Error::new(ErrorKind::Other, "Object not found"));
+}
+// Delete data from object
+#[allow(dead_code)]
+pub fn remove_data_from_object(
+    object_name: &str,
+    path: &str,
+    data_name: Vec<String>,
+) -> Result<(), std::io::Error> {
+    if !path.ends_with(".sotdb") {
+        return Err(Error::new(ErrorKind::Other, "Invalid file extension"));
+    }
+    let target_object = get_object(object_name, path)?;
+    let mut objects = load_objects(path)?;
+    if let Some(object_idx) = objects.iter().position(|object| object == &target_object) {
+        for name in data_name {
+            if let Some(data_idx) = objects
+                .get(object_idx)
+                .unwrap()
+                .get_data()
+                .iter()
+                .position(|data| data.0 == name)
+            {
+                objects
+                    .get_mut(object_idx)
+                    .unwrap()
+                    .get_data()
+                    .to_owned()
+                    .swap_remove(data_idx);
+            }
+        }
         return save_objects(objects, path.to_string());
     }
     return Err(Error::new(ErrorKind::Other, "Object not found"));
