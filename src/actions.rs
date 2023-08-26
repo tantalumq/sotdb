@@ -55,8 +55,9 @@ pub fn delete_object(object_name: &str, path: &str) -> Result<(), std::io::Error
     let mut objects = load_objects(path)?;
     if let Some(idx) = objects.iter().position(|object| object == &target_object) {
         objects.swap_remove(idx);
+        return save_objects(objects, path.to_string());
     }
-    return Ok(());
+    return Err(Error::new(ErrorKind::Other, "Object not found"));
 }
 #[allow(dead_code)]
 fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
