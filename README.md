@@ -1,5 +1,4 @@
 # Storage of tantalum
-![SOT(2)](https://github.com/Tantalumoid/sot/assets/129814675/d3ba2612-73e7-4038-8469-ac3041215b0a)
 
 Sot is a database written in Rust.
 
