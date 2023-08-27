@@ -1,0 +1,6 @@
+[object-name]:test_add_data_to_object
+[test_add_data_to_object:<str>]:test-str=test
+[test_add_data_to_object:<int>]:test-int=0
+[test_add_data_to_object:<float>]:test-float=0
+[test_add_data_to_object:<bool>]:test-bool=false
+|=============================|

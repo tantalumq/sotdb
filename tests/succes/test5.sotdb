@@ -1,0 +1,6 @@
+[object-name]:test_remove_data_from_object
+[test_remove_data_from_object:<str>]:test-str=test
+[test_remove_data_from_object:<int>]:test-int=0
+[test_remove_data_from_object:<float>]:test-float=0
+[test_remove_data_from_object:<bool>]:test-bool=false
+|=============================|

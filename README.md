@@ -34,12 +34,12 @@ fn main() -> Result<(), std::io::Error> {
     let _all_objects = get_all_objects(path)?;
     // Add data to object (requires name, path  to *.sotdb file, and vec of data: (String, DataType))
     add_data_to_object(
-        "name",
+        object.get_name(),
         path,
         vec![("boolean".to_string(), DataType::Bool(true))],
     )?;
     // Remove data from object (requires name, path to *.sotdb file, and vec of data: (var name, datatype(data)))
-    remove_data_from_object("name", path, vec!["boolean".to_string()])?;
+    remove_data_from_object(object.get_name(), path, object.get_data())?;
     // Delete object (requires name and path to *.sotdb file)
     delete_object(object.get_name(), path)?;
     Ok(())

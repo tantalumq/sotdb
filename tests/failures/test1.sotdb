@@ -1,0 +1,6 @@
+[object-name]:test-error-create-object
+[test-error-create-object:<str>]:test-str=test
+[test-error-create-object:<int>]:test-int=0
+[test-error-create-object:<float>]:test-float=0
+[test-error-create-object:<bool>]:test-bool=false
+|=============================|
