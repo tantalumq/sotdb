@@ -4,7 +4,7 @@ Sot is a database written in Rust.
 
 ## Installation
 
-Use the cargo cargo add sotdb.
+Use cargo to install the library.
 ```
 cargo add sotdb
 ```
@@ -14,7 +14,8 @@ cargo add sotdb
 use sotdb::{actions::*, structs::*};
 
 fn main() -> Result<(), std::io::Error> {
-    // Create object using name, vector of pair`s (var name, datatype(data))
+    // Create object (requires name, path to *.sotdb file, and vec of data: (var name, datatype(data)))
+    let path = "*.sotdb"
     create_object(
         "name",
         &mut vec![
@@ -25,23 +26,33 @@ fn main() -> Result<(), std::io::Error> {
             ("floatnum".to_string(), DataType::Float(0.0)),
             ("boolean".to_string(), DataType::Bool(false)),
         ],
-        "*.sotdb",
+        path,
     )?;
-    // Get one object using his name and path to *.sotdb file
-    let object = get_object("name", "*.sotdb")?;
-    // Get all objects from *.sotdb file
-    let _all_objects = get_all_objects("*.sotdb")?;
-    // Add data to object using (requires name, path, and vec of data: (String, DataType))
+    // Get one object (requires name and path to *.sotdb file)
+    let object = get_object("name", path)?;
+    // Get all objects from file (reguires path to *.sotdb file)
+    let _all_objects = get_all_objects(path)?;
+    // Add data to object (requires name, path  to *.sotdb file, and vec of data: (String, DataType))
     add_data_to_object(
         "name",
-        "*.sotdb",
+        path,
         vec![("boolean".to_string(), DataType::Bool(true))],
     )?;
-    // Remove data to object using (requires name, path, and vec of data: (String, DataType))
-    remove_data_from_object("name", "*.sotdb", vec!["boolean".to_string()])?;
-    // Delete object using his name and path to *.sotdb file
-    delete_object(object.get_name(), "*.sotdb")?;
+    // Remove data from object (requires name, path to *.sotdb file, and vec of data: (var name, datatype(data)))
+    remove_data_from_object("name", path, vec!["boolean".to_string()])?;
+    // Delete object (requires name and path to *.sotdb file)
+    delete_object(object.get_name(), path)?;
     Ok(())
+    
+    // Program writes to file:
+    // [object-name]:name
+    // [name:<str>]:text=test
+    // [name:<int>]:intnum=0
+    // [name:<float>]:floatnum=0
+    // [name:<bool>]:boolean=false
+    // |=============================|
+    // And delete this all! :)
+
 }
 ```
 ## License
