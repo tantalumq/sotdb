@@ -4,7 +4,7 @@
         "Tantalum",
         "Discrod: .tantalum",
     ]
-    version="0.1.4"
+    version="0.1.5"
     edition="2021"
     description="simple database"
     license="MIT"
