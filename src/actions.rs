@@ -193,7 +193,7 @@ fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
                     name.to_owned(),
                 ));
             }
-            if line.contains(
+            else if line.contains(
                 format!("[{}:{}]", name, DataType::Bool(false).get_type_anotation()).as_str(),
             ) {
                 let s = line.replace(
