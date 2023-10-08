@@ -3,4 +3,3 @@
 [test-get-object:<int>]:test-int=0
 [test-get-object:<float>]:test-float=0
 [test-get-object:<bool>]:test-bool=false
-|=============================|

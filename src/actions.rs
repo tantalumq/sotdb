@@ -192,8 +192,7 @@ fn load_objects(path: &str) -> Result<Vec<Object>, std::io::Error> {
                     DataType::Float(s[var_end..].to_string().replace("=", "").parse().unwrap()),
                     name.to_owned(),
                 ));
-            }
-            else if line.contains(
+            } else if line.contains(
                 format!("[{}:{}]", name, DataType::Bool(false).get_type_anotation()).as_str(),
             ) {
                 let s = line.replace(
@@ -242,7 +241,6 @@ fn save_objects(objects: Vec<Object>, path: String) -> Result<(), std::io::Error
                 .as_bytes(),
             )?;
         }
-        file.write_all(format!("|=============================|\n").as_bytes())?;
     }
     Ok(())
 }
